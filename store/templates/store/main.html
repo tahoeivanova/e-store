@@ -7,6 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <style>
+        #hello-msg{
+        font-size: 18px;
+        color: #fff;
+        margin-right: 20px
+        }
+
+    </style>
     <script type="text/javascript">
         var user = '{{request.user}}'
 
@@ -27,6 +35,35 @@
     }
     var csrftoken = getToken('csrftoken');
 
+    function getCookie(name) {
+		    // Split cookie string and get all individual name=value pairs in an array
+		    var cookieArr = document.cookie.split(";");
+
+		    // Loop through the array elements
+		    for(var i = 0; i < cookieArr.length; i++) {
+		        var cookiePair = cookieArr[i].split("=");
+
+		        /* Removing whitespace at the beginning of the cookie name
+		        and compare it with the given string */
+		        if(name == cookiePair[0].trim()) {
+		            // Decode the cookie value and return
+		            return decodeURIComponent(cookiePair[1]);
+		        }
+		    }
+
+		    // Return null if not found
+		    return null;
+		}
+		var cart = JSON.parse(getCookie('cart'))
+		if (cart == undefined){
+		    cart = {}
+		    console.log('Cart was created!')
+		    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+		}
+
+		console.log('Cart: ', cart)
+
+
     </script>
 </head>
 <body>
@@ -44,9 +81,19 @@
           </li>
         </ul>
       </div>
-        <div class="form-inline my-2 my-lg-0">
-            <a href="#"class="btn btn-warning">Login</a>
 
+        <div class="form-inline my-2 my-lg-0">
+            <div>
+                {% if user.is_authenticated %}
+                <span id="hello-msg">
+                    Hello, {{request.user}}
+                </span>
+                    <a href="{% url 'logout'%}"class="btn btn-warning">Logout</a>
+                {% else %}
+                <a href="{% url 'register'%}"class="btn btn-warning">Register</a>
+                <a href="{% url 'login'%}"class="btn btn-warning">Login</a>
+                {% endif %}
+            </div>
             <a href="{% url 'cart' %}">
             <img  id="cart-icon" src="{% static 'images/cart-icon-28355.gif'%}">
             </a>

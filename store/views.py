@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 import json
 import datetime
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
+from django.contrib import messages
+
 # Create your views here.
 
 
@@ -16,6 +18,14 @@ def store(request):
     products = Product.objects.all()
     context = {'products': products, 'cartItems':cartItems}
     return render(request, 'store/store.html', context)
+
+def product_single(request, pk):
+    data = cartData(request)
+    cartItems = data['cartItems']
+
+    product = get_object_or_404(Product, pk=pk)
+    context = {'product': product, 'cartItems':cartItems}
+    return render(request, 'store/product_single.html', context)
 
 def cart(request):
     data = cartData(request)
@@ -31,13 +41,31 @@ def checkout(request):
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()  # parent items
+        items = order.orderitem_set.all() # parent items
+        '''NEW'''
+
+        for item in items:
+            if item.product.quantity < item.quantity:
+                item.quantity = item.product.quantity
+                messages.warning(request, f'В наличии только {item.product.quantity}  {item.product.name}')
+
+        '''NEW'''
+
         cartItems = order.get_cart_items
     else:
         cookieData = cookieCart(request)
         cartItems = cookieData['cartItems']
         order = cookieData['order']
         items = cookieData['items']
+        '''NEW'''
+        for item in items:
+            product_in_storage = Product.objects.get(id=item['product']['id'])
+            if product_in_storage.quantity < item['quantity']:
+                item['quantity'] = product_in_storage.quantity
+                messages.warning(request, f'В наличии только {product_in_storage.quantity} {product_in_storage.name}')
+        '''NEW'''
+
+
 
     context = {'items': items, 'order': order, 'cartItems':cartItems}
     return render(request, 'store/checkout.html', context)

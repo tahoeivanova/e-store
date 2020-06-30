@@ -3,20 +3,29 @@
 {% block content %}
     <div class="row">
         <div class="col-lg-4">
+            <div style="max-width:350px; max-height: 350px;">
 
-            <img class="thumbnail" src="{{product.imageURL}}">
-            <div class="box-element product">
+                <img class="thumbnail" src="{{product.imageURL}}">
+                <div class="box-element product">
 
-                <h6><strong>{{product.name}}</strong></h6>
-                <hr>
-                <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-                <h4 style="display: inline-block; float: right;">${{product.price|floatformat:2}}</h4>
+                    <h6><strong>{{product.name}}</strong></h6>
+                    <hr>
+                    <button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                    <h4 style="display: inline-block; float: right;">&#8381;{{product.price|floatformat:2}}</h4>
+                </div>
             </div>
         </div>
         <div class="col-lg-4">
-            <p>Description</p>
-            <p>elit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim </p>
-
+            <p>Исполнитель: {{product.description.singer}}</p>
+            <p>Альбом: {{product.description.album}}</p>
+            <p>Лейбл: {{product.description.album.label}}</p>
+            <p>Звукозапись: {{product.description.album.factory}}</p>
+            <p>Треки:</p>
+            <ul>
+                {% for track in product.description.album.get_tracks %}
+                <li>{{track}}</li>
+                {% endfor %}
+            </ul>
             <a class="btn btn-outline-dark" href="{% url 'store' %}">&#8592; Continue Shopping</a>
 
         </div>

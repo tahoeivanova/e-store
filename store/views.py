@@ -27,6 +27,7 @@ def product_single(request, pk):
     context = {'product': product, 'cartItems':cartItems}
     return render(request, 'store/product_single.html', context)
 
+
 def cart(request):
     data = cartData(request)
     cartItems = data['cartItems']
@@ -62,6 +63,7 @@ def checkout(request):
             product_in_storage = Product.objects.get(id=item['product']['id'])
             if product_in_storage.quantity < item['quantity']:
                 item['quantity'] = product_in_storage.quantity
+
                 messages.warning(request, f'В наличии только {product_in_storage.quantity} {product_in_storage.name}')
         '''NEW'''
 

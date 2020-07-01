@@ -11,11 +11,6 @@
     <title>Music-E-Shop</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/sticky-footer.css' %}">
-
-    <script src="https://kit.fontawesome.com/7dcb6a29a1.js" crossorigin="anonymous"></script>
-
     <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/sticky-footer/">
 
     <!-- Bootstrap core CSS -->
@@ -49,7 +44,11 @@
       }
     </style>
     <!-- Custom styles for this template -->
-    <link href="sticky-footer.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sticky-footer.css' %}">
+
+    <script src="https://kit.fontawesome.com/7dcb6a29a1.js" crossorigin="anonymous"></script>
+
        <style>
         #hello-msg{
         font-size: 18px;
@@ -112,13 +111,18 @@
   </head>
   <body class="d-flex flex-column h-100">
 
-  <nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #61C07F;">
+<!--  <nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #61C07F;">-->
+    <nav class="navbar navbar-expand-md navbar-light sticky-top" style="background-color: #61C07F;">
+        <a class="navbar-brand" href="{% url 'store' %}"><i class="fas fa-record-vinyl" style="color:black;"></i> E-Music-Shop</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+<!--            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">-->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
 
-          <a class="navbar-brand" href="{% url 'store' %}"><i class="fas fa-record-vinyl" style="color:black;"></i> E-Music-Shop</a>
+<!--            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">-->
+            <ul class="navbar-nav ml-auto">
 
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-
-            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 <!--              <li class="nav-item">-->
 <!--                <a class="nav-link active" href="#"><button class="btn btn-outline-success my-2 my-sm-0" style="color: black">Store</button></a>-->
 <!--              </li>-->
@@ -145,9 +149,9 @@
                     <img  id="cart-icon" src="{% static 'images/cart-icon-28355.gif'%}">
                     </a>
                     <p id="cart-total">{{cartItems}}</p>
-              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
+<!--              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--              </button>-->
     </nav>
 
     <!-- Begin page content -->

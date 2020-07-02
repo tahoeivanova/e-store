@@ -2,6 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
+class IsActiveMixin(models.Model):
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        abstract = True
+
+class ProductManager(models.Manager):
+    def get_queryset(self):
+        all_objects = super().get_queryset()
+        return all_objects.filter(is_active=True)
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=200, null=True)
@@ -67,7 +78,8 @@ class ProductDescription(models.Model):
 Product Description END
 '''
 
-class Product(models.Model):
+class Product(IsActiveMixin, models.Model):
+    custom_id = models.IntegerField(default=100, null=True, blank=True)
     name = models.CharField(max_length=200, null=True)
     description = models.ForeignKey(ProductDescription, on_delete=models.CASCADE, blank=True, null=True)
     quality = models.CharField(max_length=200, null=True, blank=True)
@@ -79,6 +91,11 @@ class Product(models.Model):
     '''NEW'''
     quantity = models.IntegerField(default=1, blank=True, null=True)
     '''NEW'''
+
+    objects = models.Manager()
+    product_active = ProductManager()
+    class Meta:
+        ordering = ['custom_id']
 
     def __str__(self):
         return self.name

@@ -5,7 +5,7 @@ from .serializer import ProductSerializer, UserSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.product_active.all()
     serializer_class = ProductSerializer
 
 class UserViewSet(viewsets.ModelViewSet):

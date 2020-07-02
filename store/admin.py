@@ -1,6 +1,17 @@
 from django.contrib import admin
 from .models import *
 # Register your models here.
+
+def deactivate(modeladmin, request, queryset):
+    queryset.update(is_active=False)
+
+def activate(modeladmin, request, queryset):
+    queryset.update(is_active=True)
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['custom_id', 'name', 'price', 'is_active']
+    actions = [deactivate, activate]
+
 class ProductDescriptionAdmin(admin.ModelAdmin):
     list_display = ['singer']
 
@@ -20,7 +31,7 @@ class TrackAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Customer)
-admin.site.register(Product)
+admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductDescription, ProductDescriptionAdmin)
 admin.site.register(Singer, SingerAdmin)
 admin.site.register(Album, AlbumAdmin)

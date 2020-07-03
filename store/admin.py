@@ -13,7 +13,7 @@ class ProductAdmin(admin.ModelAdmin):
     actions = [deactivate, activate]
 
 class ProductDescriptionAdmin(admin.ModelAdmin):
-    list_display = ['singer']
+    list_display = ['album', 'singer', 'composer', 'conductor']
 
 class SingerAdmin(admin.ModelAdmin):
     list_display = ['singer_name']
@@ -41,3 +41,22 @@ admin.site.register(Label, LabelAdmin)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(ShippingAddress)
+
+
+admin.site.register(Composer)
+admin.site.register(Conductor)
+admin.site.register(RecordingCompany)
+admin.site.register(VynilAudioType)
+admin.site.register(Distributor)
+admin.site.register(CountryOfProduction)
+admin.site.register(GenreOfRecording)
+admin.site.register(SizeName)
+admin.site.register(Size)
+admin.site.register(Quality)
+admin.site.register(AlbumSide)
+
+
+
+
+
+

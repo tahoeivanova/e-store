@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from itertools import zip_longest
 # Create your models here.
 
 class IsActiveMixin(models.Model):
@@ -24,30 +25,112 @@ class Customer(models.Model):
 Product Description START
 '''
 class Singer(models.Model):
-    singer_name = models.CharField(max_length=200, null=True)
+    singer_name = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.singer_name
+'''Composer START'''
+class Composer(models.Model):
+    composer_name = models.CharField(max_length=200, null=True, blank=True)
+    def __str__(self):
+        return self.composer_name
+class Conductor(models.Model):
+    conductor_name = models.CharField(max_length=200, null=True, blank=True)
+    orchestra_name = models.CharField(max_length=200, null=True, blank=True)
+    def __str__(self):
+        return f'{self.conductor_name}, {self.orchestra_name}'
+
+'''Composer END'''
+
+
+'''
+Vynil Metadata START
+'''
+
+class RecordingCompany(models.Model):
+    recording_company_name = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.recording_company_name
+
+class VynilAudioType(models.Model): # stereo/mono
+    audio_type_name = models.CharField(max_length=100, null=True, blank=True)
+    def __str__(self):
+        return self.audio_type_name
+
+class Distributor(models.Model):
+    distributor_name = models.CharField(max_length=255, null=True)
+    def __str__(self):
+        return self.distributor_name
+
+'''
+Vynil Metadata END
+'''
 
 class Label(models.Model):
     label_name = models.CharField(max_length=200, null=True)
-
     def __str__(self):
         return self.label_name
 
 class Factory(models.Model):
     factory_name = models.CharField(max_length=200, null=True)
-
     def __str__(self):
         return self.factory_name
+
+'''NEW START'''
+class CountryOfProduction(models.Model):
+    country_name = models.CharField(max_length=100, null=True)
+    def __str__(self):
+        return self.country_name
+
+class GenreOfRecording(models.Model):
+    genre_name = models.CharField(max_length=200, null=True)
+    def __str__(self):
+        return self.genre_name
+
+class SizeName(models.Model):
+    size_name = models.CharField(max_length=100, null=True)
+    def __str__(self):
+        return self.size_name
+class Size(models.Model):
+    size = models.IntegerField(blank=True, null=True)
+    size_name = models.OneToOneField(SizeName, on_delete=models.CASCADE)
+    def __str__(self):
+        return f'{self.size} мм ({self.size_name})'
+
+class Quality(models.Model):
+    quality_letter = models.CharField(max_length=200, null=True, blank=True)
+    additional_info = models.CharField(max_length=200,null=True, blank=True)
+    def __str__(self):
+        return f'{self.quality_letter} ({self.additional_info})'
+'''NEW END'''
+
 
 class Album(models.Model):
     album_name = models.CharField(max_length=200, null=True)
     singer = models.ForeignKey(Singer, on_delete=models.SET_NULL, blank=True, null=True)
+    composer = models.ForeignKey(Composer, on_delete=models.SET_NULL, blank=True, null=True)
+    conductor = models.ForeignKey(Conductor, on_delete=models.SET_NULL, blank=True, null=True)
+
     label = models.ForeignKey(Label, on_delete=models.SET_NULL, blank=True, null=True)
     factory = models.ForeignKey(Factory, on_delete=models.SET_NULL, blank=True, null=True)
-    year_of_records = models.CharField(max_length=20, null=True, blank=True)
-    year_of_release = models.CharField(max_length=20, null=True, blank=True)
+
+
+    '''NEW ALBUM METADATA START'''
+    year_of_issue = models.IntegerField(null=True, blank=True)
+    year_of_records_from = models.IntegerField(null=True, blank=True)
+    year_of_records_to = models.IntegerField(null=True, blank=True)
+
+    country_of_production = models.ForeignKey(CountryOfProduction, on_delete=models.SET_NULL, blank=True, null=True)
+    recording_company = models.ForeignKey(RecordingCompany, on_delete=models.SET_NULL, blank=True, null=True)
+    audio_type = models.ForeignKey(VynilAudioType, on_delete=models.SET_NULL, blank=True, null=True)
+    distributor = models.ForeignKey(Distributor, on_delete=models.SET_NULL, blank=True, null=True)
+    issue = models.IntegerField(null=True, blank=True)
+    genre = models.ForeignKey(GenreOfRecording, on_delete=models.SET_NULL, blank=True, null=True)
+    size = models.ForeignKey(Size, on_delete=models.SET_NULL, blank=True, null=True)
+    quality = models.ForeignKey(Quality, on_delete=models.SET_NULL, blank=True, null=True)
+
+    '''NEW ALBUM METADATA END'''
 
     def __str__(self):
         return self.album_name
@@ -57,12 +140,71 @@ class Album(models.Model):
         tracks = self.track_set.all()
         return tracks
 
+    @property
+    def get_tracks_sides(self):
+
+        tracks = self.track_set.all()
+        if len(tracks) == 0:
+            return None
+        track1 = tracks.filter(album_side__album_side_name=1)
+        track2 = tracks.filter(album_side__album_side_name=2)
+        if len(tracks) == len(track1) + len(track2):
+            try:
+                track_1_time = []
+                track_2_time = []
+                track_1_name = []
+                track_2_name = []
+                track_1_no = []
+                track_2_no = []
+                for track in track1:
+                    track_1_name.append(track.track_name)
+                    track_1_time.append(track.track_time)
+                    track_1_no.append(track.track_no)
+
+                for track in track2:
+                    track_2_name.append(track.track_name)
+                    track_2_time.append(track.track_time)
+                    track_2_no.append(track.track_no)
+
+
+                track_1_time_zipped = []
+                for i in range(len(track_1_name)):
+                    track_no = track_1_no[i]
+                    track = track_1_name[i]
+                    time = track_1_time[i]
+                    track_1_time_zipped.append(f'{track_no} - {track} - {time}')
+
+                track_2_time_zipped = []
+                for i in range(len(track_2_name)):
+                    track_no = track_2_no[i]
+                    track = track_2_name[i]
+                    time = track_2_time[i]
+                    track_2_time_zipped.append(f'{track_no} - {track} - {time}')
+
+                zipped_list = zip_longest(track_1_time_zipped,track_2_time_zipped, fillvalue='')
+                return zipped_list
+            except:
+                return None
+        return None
+
+
+'''NEW START'''
+class AlbumSide(models.Model):
+    album_side_name = models.IntegerField(null=True, blank=True)
+    def __str__(self):
+        return f'{self.album_side_name}'
+
+'''NEW END'''
+
 
 class Track(models.Model):
     track_no = models.IntegerField(null=True, blank=True)
     track_name = models.CharField(max_length=200, null=True)
     track_time = models.FloatField(null=True, blank=True)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    '''New'''
+    album_side = models.ForeignKey(AlbumSide, on_delete=models.CASCADE, blank=True, null=True)
+
 
     def __str__(self):
         return self.track_name
@@ -70,10 +212,15 @@ class Track(models.Model):
 
 class ProductDescription(models.Model):
     singer = models.ForeignKey(Singer, on_delete=models.SET_NULL, blank=True, null=True)
+    composer = models.ForeignKey(Composer, on_delete=models.SET_NULL, blank=True, null=True)
+    conductor = models.ForeignKey(Conductor, on_delete=models.SET_NULL, blank=True, null=True)
     album = models.ForeignKey(Album, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
-        return f'{self.singer} - {self.album}'
+        if self.singer:
+            return f'{self.singer} - {self.album}'
+        else:
+            return f'{self.composer} - {self.conductor} -  {self.album}'
 '''
 Product Description END
 '''
@@ -82,15 +229,15 @@ class Product(IsActiveMixin, models.Model):
     custom_id = models.IntegerField(default=100, null=True, blank=True)
     name = models.CharField(max_length=200, null=True)
     description = models.ForeignKey(ProductDescription, on_delete=models.CASCADE, blank=True, null=True)
-    quality = models.CharField(max_length=200, null=True, blank=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
     digital = models.BooleanField(default=False, null=True, blank=False)
     image1 = models.ImageField(upload_to='store',null=True, blank=True)
     image2 = models.ImageField(upload_to='store',null=True, blank=True)
 
-    '''NEW'''
     quantity = models.IntegerField(default=1, blank=True, null=True)
-    '''NEW'''
+
+    custom_info = models.TextField(blank=True, null=True)
+
 
     objects = models.Manager()
     product_active = ProductManager()

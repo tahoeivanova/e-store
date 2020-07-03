@@ -41,16 +41,86 @@
             </div>
         </div>
         <div class="col-lg-4">
+            {% if product.description.singer %}
             <p>Исполнитель: {{product.description.singer}}</p>
+            {% elif product.description.composer %}
+            <p>Композитор: {{product.description.composer}}</p>
+            <p>Дирижер: {{product.description.album.conductor.conductor_name}}</p>
+            <p>Оркестр: {{product.description.album.conductor.orchestra_name}}</p>
+            {% else %}
+            <p></p>
+            {% endif %}
+            {% if product.description.album %}
             <p>Альбом: {{product.description.album}}</p>
+            {% else %}
+            <p>{{product.name}}</p>
+            {% endif %}
+
+            {% if product.description.album.label %}
             <p>Лейбл: {{product.description.album.label}}</p>
-            <p>Звукозапись: {{product.description.album.factory}}</p>
+            {% endif %}
+            {% if product.description.album.recording_company %}
+            <p>Звукозапись: {{product.description.album.recording_company}}</p>
+            {% endif %}
+            {% if product.description.album.factory %}
+            <p>Завод-изготовитель: {{product.description.album.factory}}</p>
+            {% endif %}
+            {% if product.description.album.year_of_issue %}
+            <p>Год выпуска: {{product.description.album.year_of_issue}}</p>
+            {% endif %}
+            {% if product.description.album.issue %}
+            <p>Тираж: {{product.description.album.issue}}</p>
+            {% endif %}
+
+            {% if product.description.album.year_of_records_to %}
+            <p>Год записи: {{product.description.album.year_of_records_from}} - {{product.description.album.year_of_records_to}}</p>
+            {% elif product.description.album.year_of_records_from %}
+            <p>Год записи: {{product.description.album.year_of_records_from}}</p>
+            {%endif%}
+            {% if product.description.album.country_of_production %}
+            <p>Производство: {{product.description.album.country_of_production}}</p>
+            {% endif %}
+            {% if product.description.album.audio_type %}
+            <p>Тип аудио: {{product.description.album.audio_type}}</p>
+            {%endif%}
+            {%if product.description.album.genre %}
+            <p>Жанр: {{product.description.album.genre}}</p>
+            {% endif %}
+            {% if product.description.album.size %}
+            <p>Размер: {{product.description.album.size}}</p>
+            {% endif %}
+            {% if product.description.album.quality %}
+            <p>Состояние: {{product.description.album.quality}}</p>
+            {% endif%}
+
+            {% if product.description.album.get_tracks_sides %}
             <p>Треки:</p>
+            <table border="1">
+                <tr>
+                    <th style="padding:5px;">Сторна A</th>
+                    <th style="padding:5px;">Сторона B</th>
+                </tr>
+                {% for track_A_side, track_B_side in product.description.album.get_tracks_sides%}
+                <tr>
+                    <td style="padding:5px;">{{track_A_side}}</td>
+                    <td style="padding:5px;">{{track_B_side}}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+            {% elif product.description.album.get_tracks%}
             <ul>
                 {% for track in product.description.album.get_tracks %}
                 <li>{{track}}</li>
                 {% endfor %}
             </ul>
+
+            {% endif %}
+            <p></p>
+            {% if product.custom_info %}
+            <p>Дополнительная информация: {{product.custom_info}}</p>
+            {% endif %}
+
             <a class="btn btn-outline-dark" href="{% url 'store' %}">&#8592; Continue Shopping</a>
 
         </div>

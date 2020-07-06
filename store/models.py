@@ -38,7 +38,7 @@ class Conductor(models.Model):
     conductor_name = models.CharField(max_length=200, null=True, blank=True)
     orchestra_name = models.CharField(max_length=200, null=True, blank=True)
     def __str__(self):
-        return f'{self.conductor_name}, {self.orchestra_name}'
+        return f'{self.conductor_name}, {self.orchestra_name}' if self.orchestra_name else self.conductor_name
 
 '''Composer END'''
 
@@ -98,11 +98,16 @@ class Size(models.Model):
     def __str__(self):
         return f'{self.size} мм ({self.size_name})'
 
-class Quality(models.Model):
+class QualityLP(models.Model):
     quality_letter = models.CharField(max_length=200, null=True, blank=True)
     additional_info = models.CharField(max_length=200,null=True, blank=True)
     def __str__(self):
         return f'{self.quality_letter} ({self.additional_info})'
+
+class QualityCover(models.Model):
+    info = models.CharField(max_length=200,null=True, blank=True)
+    def __str__(self):
+        return self.info
 '''NEW END'''
 
 
@@ -128,12 +133,14 @@ class Album(models.Model):
     issue = models.IntegerField(null=True, blank=True)
     genre = models.ForeignKey(GenreOfRecording, on_delete=models.SET_NULL, blank=True, null=True)
     size = models.ForeignKey(Size, on_delete=models.SET_NULL, blank=True, null=True)
-    quality = models.ForeignKey(Quality, on_delete=models.SET_NULL, blank=True, null=True)
+    quality_lp = models.ForeignKey(QualityLP, on_delete=models.SET_NULL, blank=True, null=True)
+    quality_cover = models.ForeignKey(QualityCover, on_delete=models.SET_NULL, blank=True, null=True)
+
 
     '''NEW ALBUM METADATA END'''
 
     def __str__(self):
-        return self.album_name
+        return f'{self.singer}, {self.album_name}'
 
     @property
     def get_tracks(self):
@@ -154,32 +161,38 @@ class Album(models.Model):
                 track_2_time = []
                 track_1_name = []
                 track_2_name = []
-                track_1_no = []
-                track_2_no = []
+                # track_1_no = []
+                # track_2_no = []
                 for track in track1:
                     track_1_name.append(track.track_name)
                     track_1_time.append(track.track_time)
-                    track_1_no.append(track.track_no)
+                    # track_1_no.append(track.track_no)
 
                 for track in track2:
                     track_2_name.append(track.track_name)
                     track_2_time.append(track.track_time)
-                    track_2_no.append(track.track_no)
+                    # track_2_no.append(track.track_no)
 
 
                 track_1_time_zipped = []
                 for i in range(len(track_1_name)):
-                    track_no = track_1_no[i]
+                    # track_no = track_1_no[i]
                     track = track_1_name[i]
                     time = track_1_time[i]
-                    track_1_time_zipped.append(f'{track_no} - {track} - {time}')
+                    if time:
+                        track_1_time_zipped.append(f'{track} - {time}')
+                    else:
+                        track_1_time_zipped.append(f'{track}')
 
                 track_2_time_zipped = []
                 for i in range(len(track_2_name)):
-                    track_no = track_2_no[i]
+                    # track_no = track_2_no[i]
                     track = track_2_name[i]
                     time = track_2_time[i]
-                    track_2_time_zipped.append(f'{track_no} - {track} - {time}')
+                    if time:
+                        track_2_time_zipped.append(f'{track} - {time}')
+                    else:
+                        track_2_time_zipped.append(f'{track}')
 
                 zipped_list = zip_longest(track_1_time_zipped,track_2_time_zipped, fillvalue='')
                 return zipped_list
@@ -205,9 +218,12 @@ class Track(models.Model):
     '''New'''
     album_side = models.ForeignKey(AlbumSide, on_delete=models.CASCADE, blank=True, null=True)
 
+    class Meta:
+        ordering = ['id']
+
 
     def __str__(self):
-        return self.track_name
+        return f'{self.track_name} - {self.track_time}' if self.track_time else self.track_name
 
 
 class ProductDescription(models.Model):

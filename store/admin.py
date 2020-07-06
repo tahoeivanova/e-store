@@ -52,7 +52,8 @@ admin.site.register(CountryOfProduction)
 admin.site.register(GenreOfRecording)
 admin.site.register(SizeName)
 admin.site.register(Size)
-admin.site.register(Quality)
+admin.site.register(QualityLP)
+admin.site.register(QualityCover)
 admin.site.register(AlbumSide)
 
 

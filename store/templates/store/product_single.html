@@ -46,19 +46,19 @@
             {% elif product.description.composer %}
             <p>Композитор: {{product.description.composer}}</p>
             <p>Дирижер: {{product.description.album.conductor.conductor_name}}</p>
+            {% if product.description.album.conductor.orchestra_name %}
             <p>Оркестр: {{product.description.album.conductor.orchestra_name}}</p>
+            {% endif %}
             {% else %}
             <p></p>
             {% endif %}
             {% if product.description.album %}
-            <p>Альбом: {{product.description.album}}</p>
+            <p>Альбом: {{product.description.album.album_name}}</p>
             {% else %}
             <p>{{product.name}}</p>
             {% endif %}
 
-            {% if product.description.album.label %}
-            <p>Лейбл: {{product.description.album.label}}</p>
-            {% endif %}
+
             {% if product.description.album.recording_company %}
             <p>Звукозапись: {{product.description.album.recording_company}}</p>
             {% endif %}
@@ -71,7 +71,9 @@
             {% if product.description.album.issue %}
             <p>Тираж: {{product.description.album.issue}}</p>
             {% endif %}
-
+            {% if product.description.album.label %}
+            <p>Лейбл: {{product.description.album.label}}</p>
+            {% endif %}
             {% if product.description.album.year_of_records_to %}
             <p>Год записи: {{product.description.album.year_of_records_from}} - {{product.description.album.year_of_records_to}}</p>
             {% elif product.description.album.year_of_records_from %}
@@ -89,8 +91,11 @@
             {% if product.description.album.size %}
             <p>Размер: {{product.description.album.size}}</p>
             {% endif %}
-            {% if product.description.album.quality %}
-            <p>Состояние: {{product.description.album.quality}}</p>
+            {% if product.description.album.quality_lp %}
+            <p>Состояние пластинки: {{product.description.album.quality_lp}}</p>
+            {% endif%}
+            {% if product.description.album.quality_cover %}
+            <p>Состояние конверта: {{product.description.album.quality_cover}}</p>
             {% endif%}
 
             {% if product.description.album.get_tracks_sides %}
